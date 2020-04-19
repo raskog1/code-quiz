@@ -4,15 +4,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="./css/style.css">
     <title>Document</title>
 </head>
 
 <body>
+    <div class="container">
+        <div class="instructions">
+            <h2 id="announcement"></h2>
+            <p id="explanation"></p>
+            <input type="button" id="start" value="Start Quiz">
+        </div>
 
-    <h3 id="list-question"></h3>
-    <ul id="list-answers"></ul>
+        <div class="guantlet">
+            <h2 id="list-question"></h2>
+            <ul id="list-answers"></ul>
+            <input type="button" id="submit" value="Submit">
+        </div>
+    </div>
 
-    <script src="js/style.js"></script>
+    <script src="js/script.js"></script>
 
 </body>
 
