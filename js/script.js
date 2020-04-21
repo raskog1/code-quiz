@@ -1,7 +1,5 @@
 let mainBox = document.querySelector("#main-box");
 let startButton = document.querySelector("#start-button");
-let submitButton = document.querySelector("#submit-button");
-let sButton = document.querySelector("sButton");
 let timerScore = document.querySelector("#timer-score");
 let listAnswers = document.querySelector("#list-answers");
 let secondBox = document.querySelector("#second-box");
@@ -60,10 +58,9 @@ let questions = [
     }
 
 ]
-let randomQ = questions[Math.floor(Math.random() * questions.length)];
 let ansBank = [];
 let q = 0;
-let quizTimer = 90;
+let quizTimer = 20;
 let innerTimer = 11;
 let startTimer = 3;
 let totalScore = 100;
@@ -77,8 +74,6 @@ function onLoad() {
     let p = document.createElement("p");
     p.textContent = "Welcome to the coding quiz.  You will get a series of 10 questions, and have 10 seconds to answer each question. Scoring is awarded by how fast each question is answered. There is a penalty for incorrect answers, so review all choices before submitting.  Click the button below to start the quiz."
     mainBox.appendChild(p);
-
-    submitButton.style.display = "none";
 }
 
 onLoad();
@@ -95,8 +90,6 @@ function answerArr(quest) {
         ansBank.push(quest.wrongAnswers[i]);
     }
 }
-
-let timer;
 
 // Initializes countdown timer and total quiz timer
 function startQuiz() {
@@ -118,7 +111,6 @@ function startQuiz() {
         } else {
             clearInterval(timer);
             mainBox.lastElementChild.remove(); // Deletes h1 element
-            listAns();
 
             // Starts quizTimer
             let timeLeft = document.createElement("h3");
@@ -132,6 +124,7 @@ function startQuiz() {
                     clearInterval(timer2);
                 }
             }, 1000);
+            listAns();
         }
     }, 1000);
 }
@@ -141,76 +134,53 @@ function listAns() {
 
     innerTimer = 11;
     ansBank = [];
+    listAnswers.innerHTML = "";
     answerArr(questions[q]);
     shuffle(ansBank);
     mainBox.lastElementChild.style.fontSize = "24px";
-    mainBox.lastElementChild.textContent = JSON.stringify(questions[q].question);
+    mainBox.lastElementChild.textContent = (questions[q].question);
 
     for (i = 0; i < ansBank.length; i++) {
-
-        let content = document.getElementById(i);
-        content.innerHTML = "";
-
-        let input = document.createElement("input");
-        let label = document.createElement("label");
-
-        input.setAttribute("type", "radio");
-        input.setAttribute("name", "chooseAns");    //Makes only one radio button selectable at a time
-        input.setAttribute("id", i);                //Assigns ID of answer to match array ID
-        label.setAttribute("for", input.id);
-
-        label.textContent = ansBank[i];
-
-        content = document.getElementById(i);
-        content.append(input, label);
+        let li = document.createElement("li");
+        li.id = i;
+        li.innerHTML = "<button>" + ansBank[i] + "</button>";
+        listAnswers.append(li);
     }
-
-    submitButton.style.display = "block";
 
     // Internal timer gives 11 seconds to answer each question
     timer = setInterval(function () {
-        if (innerTimer > 0) {
+        if (innerTimer > 0 && quizTimer > 0) {
             console.log(innerTimer);
             innerTimer--;
-        } else {
+        } else if (innerTimer <= 0 && quizTimer > 0) {
             clearInterval(timer);
             nextQuestion();
             totalScore -= 10;
+        } else {
+            endQuiz();
         }
     }, 1000);
-
 }
 
 // Compares answer to correct answer, updates totalScore
 function checkAndScore() {
 
-    let answer = ansBank.indexOf(questions[q].rightAnswer);
-    //let answerValue = document.querySelector("input[type=radio]:checked").id;
-    let nullCheck;
+    if (event.target.matches("button")) {
+        event.preventDefault();
+        let chosenId = event.target.parentElement.id;
+        let answerId = ansBank.indexOf(questions[q].rightAnswer);
 
-    //for (i = 0; i < ansBank.length; i++) {
-    if (document.querySelector("input[type=radio]:checked")) {
-        let answer = ansBank.indexOf(questions[q].rightAnswer);
-        let answerValue = document.querySelector("input[type=radio]:checked").id;
-        console.log("Array index chosen is " + answerValue);
-        if (answer == answerValue) {
+        if (chosenId == answerId) {
             clearInterval(timer);
             totalScore -= (10 - innerTimer);
-            // console.log(totalScore);
-            // console.log(answer);
-            // console.log(answerValue);
+            nextQuestion();
         } else {
             clearInterval(timer);
             quizTimer -= 10;
             totalScore -= 10;
-            // console.log(totalScore);
-            // console.log(answer);
-            // console.log(answerValue);
+            nextQuestion();
         }
-    } else {
-        alert("Please check a radio button.");
     }
-    //}
 }
 
 // Checks for game over conditions, pulls next question
@@ -219,7 +189,6 @@ function nextQuestion() {
     q++;
 
     if (q < questions.length && quizTimer > 0) {
-        checkAndScore(); console.log(totalScore);
         listAns();
     } else {
         endQuiz();
@@ -228,11 +197,24 @@ function nextQuestion() {
 
 function endQuiz() {
 
-    mainBox.innerHTML = "";
-    secondBox.innerHTML = "";
+    clearInterval(timer);
+    clearInterval(timer2);
+    timerScore.innerHTML = "";
+    listAnswers.innerHTML = "";
 
+    mainBox.lastElementChild.textContent = "The quiz is complete.  Your final score is:";
+    let h1 = document.createElement("h1");
+    h1.textContent = totalScore;
+    mainBox.appendChild(h1);
 
-    //Display that quiz is complete, your final score is x
+    let initialBox = document.createElement("input");
+    let submitButton = document.createElement("button");
+    initialBox.setAttribute("placeholder", "Initials");
+    initialBox.setAttribute("id", "initials");
+    submitButton.setAttribute("id", "submit");
+    submitButton.textContent = "Submit";
+    timerScore.append(initialBox, submitButton);
+
     //Text input for initials
     //Call leaderBoard
 }
@@ -250,6 +232,6 @@ function shuffle(array) {
     }
 }
 
-//submitButton.addEventListener("click", nextQuestion);
 startButton.addEventListener("click", startQuiz);
-submitButton.addEventListener("click", nextQuestion);
+listAnswers.addEventListener("click", checkAndScore);
+timerScore.addEventListener("click", leaderBoard);
