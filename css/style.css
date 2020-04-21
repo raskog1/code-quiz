@@ -4,12 +4,30 @@
     margin: 0;
 }
 
+.container {
+    width: 50%;
+    margin: auto;
+}
+
+.container h1, h2, h3 {
+    text-align: center;
+}
+
+h1 {
+    font-size: 80px;
+}
+
+#sButton {
+    text-align: center;
+}
+
 ul li {
     list-style-type: none;
-    font-size: 24px;
+    font-size: 20px;
 }
 
 ul li input {
+    display: inline;
     float: left;
     margin-top: .5em;
 }
@@ -18,3 +36,4 @@ label {
     margin-left: 8px;
 
 }
+
