@@ -1,10 +1,15 @@
 let mainBox = document.querySelector("#main-box");
 let startButton = document.querySelector("#start-button");
+let submitButton = document.querySelector("#submit-button");
+let playAgainButton = document.querySelector("#play-again");
+let leaderboardButton = document.querySelector("#leaderboard");
 let timerScore = document.querySelector("#timer-score");
 let listAnswers = document.querySelector("#list-answers");
 let secondBox = document.querySelector("#second-box");
+let addInitials = document.querySelector("#add-initials");
+let dialogue = document.querySelector("#main-dialogue");
 
-
+// Variables used in code
 let questions = [
     {
         question: "A boolean represents what type of values?",
@@ -34,7 +39,7 @@ let questions = [
     {
         question: "Where should an external JavaScript file be linked in an HTML document?",
         wrongAnswers: ["In the header.", "At the end of the document, after the body.", "At the beginning of the body."],
-        rightAnswer: "At the end of the body, before the </body> tag",
+        rightAnswer: "At the end of the body, before the closing body tag",
     },
     {
         question: "Media Queries are used to do what?",
@@ -59,21 +64,20 @@ let questions = [
 
 ]
 let ansBank = [];
+let highScores = [];
 let q = 0;
-let quizTimer = 20;
+let quizTimer = 90;
 let innerTimer = 11;
 let startTimer = 3;
 let totalScore = 100;
 
 // Executes on screen load, creates h2, p, and ammends button
 function onLoad() {
-    let h2 = document.createElement("h2");
-    h2.textContent = "Coding Quiz";
-    mainBox.appendChild(h2);
-
-    let p = document.createElement("p");
-    p.textContent = "Welcome to the coding quiz.  You will get a series of 10 questions, and have 10 seconds to answer each question. Scoring is awarded by how fast each question is answered. There is a penalty for incorrect answers, so review all choices before submitting.  Click the button below to start the quiz."
-    mainBox.appendChild(p);
+    dialogue.textContent = "Welcome to the coding quiz.  You will get a series of 10 questions, and have 10 seconds to answer each question. Scoring is awarded by how fast each question is answered. There is a penalty for incorrect answers, so review all choices before submitting.  Click the button below to start the quiz."
+    playAgainButton.style.display = "none";
+    leaderboardButton.style.display = "none";
+    addInitials.style.display = "none";
+    submitButton.style.display = "none";
 }
 
 onLoad();
@@ -95,10 +99,13 @@ function answerArr(quest) {
 function startQuiz() {
 
     questArr();
-
+    q = 0;
+    quizTimer = 90;
+    startTimer = 3;
+    totalScore = 100;
     startButton.style.display = "none";
-    mainBox.lastElementChild.textContent = "Get ready, the quiz will begin in: ";
-    mainBox.lastElementChild.style.textAlign = "center";
+    mainBox.firstElementChild.textContent = "Get ready, the quiz will begin in: ";
+    dialogue.textContent = "";
 
     let bigTime = document.createElement("h1");
     mainBox.appendChild(bigTime);
@@ -129,7 +136,7 @@ function startQuiz() {
     }, 1000);
 }
 
-// Puts all answers into HTML with radio buttons
+// Puts all answers into HTML as list item buttons
 function listAns() {
 
     innerTimer = 11;
@@ -137,8 +144,9 @@ function listAns() {
     listAnswers.innerHTML = "";
     answerArr(questions[q]);
     shuffle(ansBank);
-    mainBox.lastElementChild.style.fontSize = "24px";
-    mainBox.lastElementChild.textContent = (questions[q].question);
+    mainBox.firstElementChild.textContent = "Coding Quiz";
+    dialogue.style.fontSize = "24px";
+    dialogue.textContent = (questions[q].question);
 
     for (i = 0; i < ansBank.length; i++) {
         let li = document.createElement("li");
@@ -150,7 +158,6 @@ function listAns() {
     // Internal timer gives 11 seconds to answer each question
     timer = setInterval(function () {
         if (innerTimer > 0 && quizTimer > 0) {
-            console.log(innerTimer);
             innerTimer--;
         } else if (innerTimer <= 0 && quizTimer > 0) {
             clearInterval(timer);
@@ -195,36 +202,71 @@ function nextQuestion() {
     }
 }
 
+// Displays final score, populates entry for initials and Submit button
 function endQuiz() {
 
     clearInterval(timer);
     clearInterval(timer2);
-    timerScore.innerHTML = "";
+    timerScore.lastElementChild.remove();
     listAnswers.innerHTML = "";
+    dialogue.textContent = "";
+    mainBox.firstElementChild.textContent = "The quiz is complete.  Your final score is:";
+    let bigScore = document.createElement("h1");
+    bigScore.textContent = totalScore;
+    mainBox.appendChild(bigScore);
 
-    mainBox.lastElementChild.textContent = "The quiz is complete.  Your final score is:";
-    let h1 = document.createElement("h1");
-    h1.textContent = totalScore;
-    mainBox.appendChild(h1);
-
-    let initialBox = document.createElement("input");
-    let submitButton = document.createElement("button");
-    initialBox.setAttribute("placeholder", "Initials");
-    initialBox.setAttribute("id", "initials");
-    submitButton.setAttribute("id", "submit");
-    submitButton.textContent = "Submit";
-    timerScore.append(initialBox, submitButton);
-
-    //Text input for initials
-    //Call leaderBoard
+    addInitials.style.display = "inline";
+    submitButton.style.display = "inline";
 }
 
-function leaderBoard() {
-    //sort array by high score
-    //display array
+// Event listener for the Submit button which stores initials and scores into an array
+submitButton.addEventListener("click", function (event) {
+    event.preventDefault();
+
+    submitButton.style.display = "none";
+    addInitials.style.display = "none";
+    playAgainButton.style.display = "inline";
+    leaderboardButton.style.display = "inline";
+
+    let scoreEntry = {
+        init: initials.value.trim(),
+        score: totalScore
+    };
+
+    if (scoreEntry.init === "") {
+        scoreEntry.init = "???";
+    }
+
+    highScores.push(scoreEntry);
+
+    highScores.sort(function (a, b) {
+        return a.score - b.score;
+    });
+});
+
+// Populates a sorted leaderboard with a Play Again option
+function seeLeaderboard() {
+    mainBox.lastElementChild.textContent = "";
+    leaderboardButton.style.display = "none";
+    mainBox.firstElementChild.textContent = "Leaderboard";
+
+    for (i = highScores.length - 1; i >= 0; i--) {
+        let leaderList = document.createElement("li");
+        leaderList.innerHTML = highScores[i].init.toUpperCase() + ": " + highScores[i].score;
+        listAnswers.append(leaderList);
+    }
 }
 
-//Code borrowed from http://javascript.info/task/shuffle, Fisher-Yates shuffle
+// Resets the quiz and begins from startQuiz function
+function startOver() {
+    mainBox.lastElementChild.remove();
+    listAnswers.innerHTML = "";
+    playAgainButton.style.display = "none";
+    leaderboardButton.style.display = "none";
+    startQuiz();
+}
+
+// Code borrowed from http://javascript.info/task/shuffle, Fisher-Yates shuffle
 function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
         let j = Math.floor(Math.random() * (i + 1));
@@ -233,5 +275,7 @@ function shuffle(array) {
 }
 
 startButton.addEventListener("click", startQuiz);
+playAgainButton.addEventListener("click", startOver);
+leaderboardButton.addEventListener("click", seeLeaderboard);
 listAnswers.addEventListener("click", checkAndScore);
-timerScore.addEventListener("click", leaderBoard);
+

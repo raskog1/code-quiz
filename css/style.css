@@ -9,7 +9,7 @@
     margin: auto;
 }
 
-.container h1, h2, h3 {
+.container h1, h2, h3, li {
     text-align: center;
 }
 
@@ -17,13 +17,30 @@ h1 {
     font-size: 80px;
 }
 
-#list-answers button {
-    width: 100%;
-    margin: 5px;
+#main-box {
+    text-align: center;
 }
 
 #timer-score {
     text-align: center;
+}
+
+#start-button {
+    display: block;
+    margin: auto;
+}
+
+#submit-button {
+    display: inline;
+}
+
+#add-initials {
+    display: inline;
+}
+
+#list-answers button {
+    width: 100%;
+    margin: 5px;
 }
 
 ul li {
@@ -32,13 +49,7 @@ ul li {
 }
 
 ul li input {
-    display: inline;
-    float: left;
     margin-top: .5em;
 }
 
-label {
-    margin-left: 8px;
-
-}
 

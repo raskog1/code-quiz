@@ -13,6 +13,8 @@
 <body>
     <div class="container">
         <div id="main-box">
+            <h2>Coding Quiz</h2>
+            <p id="main-dialogue"></p>
 
         </div>
         <div id="second-box">
@@ -20,12 +22,15 @@
             </ul>
         </div>
         <div id="timer-score">
-            <input type="button" id="start-button" value="Start Quiz">
+            <button id="start-button">Start Quiz</button>
+            <form id="add-initials">
+                <input type="text" placeholder="Enter your initials" name="initials" id="initials" maxlength="3" />
+            </form>
+            <button id="submit-button">Submit</button>
+            <button id="play-again">Play Again</button>
+            <button id="leaderboard">Leaderboard</button>
+            <!-- <input type="button" id="start-button" value="Start Quiz"> -->
         </div>
-
-        <!-- <div class="guantlet">
-            <h2 id="list-question"></h2>
-            <ul id="list-answers"></ul> -->
     </div>
 
     <script src="js/script.js"></script>
