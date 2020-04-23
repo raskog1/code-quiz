@@ -11,25 +11,28 @@
 </head>
 
 <body>
-    <div class="container">
+
+    <div class="container rounded-lg">
         <div id="main-box">
             <h2>Coding Quiz</h2>
-            <p id="main-dialogue"></p>
-
+            <p id="main-dialogue">Welcome to the coding quiz. You will get a series of 10 questions, and have 10 seconds
+                to answer each question. Scoring is awarded by how fast each question is answered. There is a penalty
+                for incorrect answers, so review all choices before submitting. Click the button below to start the
+                quiz.</p>
+            <p id="question-display"></p>
         </div>
         <div id="second-box">
             <ul id="list-answers">
             </ul>
         </div>
         <div id="timer-score">
-            <button id="start-button">Start Quiz</button>
+            <button id="start-button" class="btn btn-primary">Start Quiz</button>
             <form id="add-initials">
                 <input type="text" placeholder="Enter your initials" name="initials" id="initials" maxlength="3" />
             </form>
-            <button id="submit-button">Submit</button>
-            <button id="play-again">Play Again</button>
-            <button id="leaderboard">Leaderboard</button>
-            <!-- <input type="button" id="start-button" value="Start Quiz"> -->
+            <button id="submit-button" class="btn btn-primary">Submit</button>
+            <button id="play-again" class="btn btn-primary">Play Again</button>
+            <button id="leaderboard" class="btn btn-primary">Leaderboard</button>
         </div>
     </div>
 

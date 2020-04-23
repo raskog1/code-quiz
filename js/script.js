@@ -1,3 +1,4 @@
+let container = document.querySelector(".container");
 let mainBox = document.querySelector("#main-box");
 let startButton = document.querySelector("#start-button");
 let submitButton = document.querySelector("#submit-button");
@@ -8,6 +9,7 @@ let listAnswers = document.querySelector("#list-answers");
 let secondBox = document.querySelector("#second-box");
 let addInitials = document.querySelector("#add-initials");
 let dialogue = document.querySelector("#main-dialogue");
+let questionDisplay = document.querySelector("#question-display");
 
 // Variables used in code
 let questions = [
@@ -66,14 +68,13 @@ let questions = [
 let ansBank = [];
 let highScores = [];
 let q = 0;
-let quizTimer = 90;
-let innerTimer = 11;
+let quizTimer = 99;
+let innerTimer = 10;
 let startTimer = 3;
 let totalScore = 100;
 
 // Executes on screen load, creates h2, p, and ammends button
 function onLoad() {
-    dialogue.textContent = "Welcome to the coding quiz.  You will get a series of 10 questions, and have 10 seconds to answer each question. Scoring is awarded by how fast each question is answered. There is a penalty for incorrect answers, so review all choices before submitting.  Click the button below to start the quiz."
     playAgainButton.style.display = "none";
     leaderboardButton.style.display = "none";
     addInitials.style.display = "none";
@@ -100,12 +101,12 @@ function startQuiz() {
 
     questArr();
     q = 0;
-    quizTimer = 90;
+    quizTimer = 99;
     startTimer = 3;
     totalScore = 100;
     startButton.style.display = "none";
     mainBox.firstElementChild.textContent = "Get ready, the quiz will begin in: ";
-    dialogue.textContent = "";
+    dialogue.remove();
 
     let bigTime = document.createElement("h1");
     mainBox.appendChild(bigTime);
@@ -139,23 +140,23 @@ function startQuiz() {
 // Puts all answers into HTML as list item buttons
 function listAns() {
 
-    innerTimer = 11;
+    innerTimer = 10;
     ansBank = [];
     listAnswers.innerHTML = "";
     answerArr(questions[q]);
     shuffle(ansBank);
     mainBox.firstElementChild.textContent = "Coding Quiz";
-    dialogue.style.fontSize = "24px";
-    dialogue.textContent = (questions[q].question);
+    questionDisplay.textContent = (questions[q].question);
 
     for (i = 0; i < ansBank.length; i++) {
-        let li = document.createElement("li");
-        li.id = i;
-        li.innerHTML = "<button>" + ansBank[i] + "</button>";
-        listAnswers.append(li);
+        let ansButton = document.createElement("button");
+        ansButton.id = i;
+        ansButton.textContent = ansBank[i];
+        ansButton.setAttribute("class", "btn btn-primary");
+        listAnswers.append(ansButton);
     }
 
-    // Internal timer gives 11 seconds to answer each question
+    // Internal timer gives 10 seconds to answer each question
     timer = setInterval(function () {
         if (innerTimer > 0 && quizTimer > 0) {
             innerTimer--;
@@ -174,17 +175,19 @@ function checkAndScore() {
 
     if (event.target.matches("button")) {
         event.preventDefault();
-        let chosenId = event.target.parentElement.id;
+        let chosenId = event.target.id;
         let answerId = ansBank.indexOf(questions[q].rightAnswer);
 
         if (chosenId == answerId) {
             clearInterval(timer);
             totalScore -= (10 - innerTimer);
+            container.style.border = "10px solid #28a745";
             nextQuestion();
         } else {
             clearInterval(timer);
             quizTimer -= 10;
             totalScore -= 10;
+            container.style.border = "10px solid #dc3545";
             nextQuestion();
         }
     }
@@ -202,14 +205,14 @@ function nextQuestion() {
     }
 }
 
-// Displays final score, populates entry for initials and Submit button
+// Displays final score, displays entry for initials and Submit button
 function endQuiz() {
 
     clearInterval(timer);
     clearInterval(timer2);
     timerScore.lastElementChild.remove();
     listAnswers.innerHTML = "";
-    dialogue.textContent = "";
+    questionDisplay.textContent = "";
     mainBox.firstElementChild.textContent = "The quiz is complete.  Your final score is:";
     let bigScore = document.createElement("h1");
     bigScore.textContent = totalScore;
@@ -219,10 +222,11 @@ function endQuiz() {
     submitButton.style.display = "inline";
 }
 
-// Event listener for the Submit button which stores initials and scores into an array
+// Event listener for the Submit button which stores initials and scores into an array, then sorts it
 submitButton.addEventListener("click", function (event) {
     event.preventDefault();
 
+    container.style.border = "10px solid black";
     submitButton.style.display = "none";
     addInitials.style.display = "none";
     playAgainButton.style.display = "inline";
@@ -250,8 +254,12 @@ function seeLeaderboard() {
     leaderboardButton.style.display = "none";
     mainBox.firstElementChild.textContent = "Leaderboard";
 
+    if (highScores.length > 8) {
+        highScores.shift();
+    }
+
     for (i = highScores.length - 1; i >= 0; i--) {
-        let leaderList = document.createElement("li");
+        let leaderList = document.createElement("h5");
         leaderList.innerHTML = highScores[i].init.toUpperCase() + ": " + highScores[i].score;
         listAnswers.append(leaderList);
     }
