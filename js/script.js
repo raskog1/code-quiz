@@ -67,11 +67,11 @@ let questions = [
 ]
 let ansBank = [];
 let highScores = [];
-let q = 0;
-let quizTimer = 99;
-let innerTimer = 10;
-let startTimer = 3;
-let totalScore = 100;
+let q;
+let quizTimer;
+let innerTimer;
+let startTimer;
+let totalScore;
 
 // Executes on screen load, creates h2, p, and ammends button
 function onLoad() {
@@ -83,11 +83,6 @@ function onLoad() {
 
 onLoad();
 
-// Randomize array of questions
-function questArr() {
-    shuffle(questions);
-}
-
 // Puts all answers in an array for random order output
 function answerArr(quest) {
     ansBank.push(quest.rightAnswer);
@@ -97,9 +92,10 @@ function answerArr(quest) {
 }
 
 // Initializes countdown timer and total quiz timer
-function startQuiz() {
+startButton.addEventListener("click", function (event) {
+    event.preventDefault();
 
-    questArr();
+    shuffle(questions);
     q = 0;
     quizTimer = 99;
     startTimer = 3;
@@ -135,12 +131,12 @@ function startQuiz() {
             listAns();
         }
     }, 1000);
-}
+})
 
 // Puts all answers into HTML as list item buttons
 function listAns() {
 
-    innerTimer = 10;
+    innerTimer = 9;
     ansBank = [];
     listAnswers.innerHTML = "";
     answerArr(questions[q]);
@@ -163,7 +159,8 @@ function listAns() {
         } else if (innerTimer <= 0 && quizTimer > 0) {
             clearInterval(timer);
             nextQuestion();
-            totalScore -= 10;
+            totalScore -= 11;
+            container.style.border = "10px solid #dc3545";
         } else {
             endQuiz();
         }
@@ -171,7 +168,8 @@ function listAns() {
 }
 
 // Compares answer to correct answer, updates totalScore
-function checkAndScore() {
+listAnswers.addEventListener("click", function (event) {
+    event.preventDefault();
 
     if (event.target.matches("button")) {
         event.preventDefault();
@@ -180,18 +178,18 @@ function checkAndScore() {
 
         if (chosenId == answerId) {
             clearInterval(timer);
-            totalScore -= (10 - innerTimer);
+            totalScore -= (10 - (innerTimer + 1));
             container.style.border = "10px solid #28a745";
             nextQuestion();
         } else {
             clearInterval(timer);
-            quizTimer -= 10;
+            quizTimer -= 9;
             totalScore -= 10;
             container.style.border = "10px solid #dc3545";
             nextQuestion();
         }
     }
-}
+})
 
 // Checks for game over conditions, pulls next question
 function nextQuestion() {
@@ -249,7 +247,9 @@ submitButton.addEventListener("click", function (event) {
 });
 
 // Populates a sorted leaderboard with a Play Again option
-function seeLeaderboard() {
+leaderboardButton.addEventListener("click", function (event) {
+    event.preventDefault();
+
     mainBox.lastElementChild.textContent = "";
     leaderboardButton.style.display = "none";
     mainBox.firstElementChild.textContent = "Leaderboard";
@@ -263,16 +263,18 @@ function seeLeaderboard() {
         leaderList.innerHTML = highScores[i].init.toUpperCase() + ": " + highScores[i].score;
         listAnswers.append(leaderList);
     }
-}
+})
 
 // Resets the quiz and begins from startQuiz function
-function startOver() {
+playAgainButton.addEventListener("click", function (event) {
+    event.preventDefault();
+
     mainBox.lastElementChild.remove();
     listAnswers.innerHTML = "";
     playAgainButton.style.display = "none";
     leaderboardButton.style.display = "none";
     startQuiz();
-}
+})
 
 // Code borrowed from http://javascript.info/task/shuffle, Fisher-Yates shuffle
 function shuffle(array) {
@@ -281,9 +283,3 @@ function shuffle(array) {
         [array[i], array[j]] = [array[j], array[i]];
     }
 }
-
-startButton.addEventListener("click", startQuiz);
-playAgainButton.addEventListener("click", startOver);
-leaderboardButton.addEventListener("click", seeLeaderboard);
-listAnswers.addEventListener("click", checkAndScore);
-
