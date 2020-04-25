@@ -92,7 +92,7 @@ function answerArr(quest) {
 }
 
 // Initializes countdown timer and total quiz timer
-startButton.addEventListener("click", function (event) {
+function startQuiz() {
     event.preventDefault();
 
     shuffle(questions);
@@ -131,7 +131,7 @@ startButton.addEventListener("click", function (event) {
             listAns();
         }
     }, 1000);
-})
+}
 
 // Puts all answers into HTML as list item buttons
 function listAns() {
@@ -283,3 +283,5 @@ function shuffle(array) {
         [array[i], array[j]] = [array[j], array[i]];
     }
 }
+
+startButton.addEventListener("click", startQuiz);
